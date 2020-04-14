@@ -12,6 +12,8 @@ flask-marshmallow = "*"
 flask-sqlalchemy = "*"
 pylint = "*"
 marshmallow-sqlalchemy = "*"
+python-dotenv = "*"
+pymysql = "*"
 
 [requires]
 python_version = "3.7"
