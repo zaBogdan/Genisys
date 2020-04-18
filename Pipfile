@@ -14,8 +14,8 @@ pylint = "*"
 marshmallow-sqlalchemy = "*"
 python-dotenv = "*"
 pymysql = "*"
-pycryptodome = "*"
 pycryptodomex = "*"
+flask-bcrypt = "*"
 
 [requires]
 python_version = "3.7"

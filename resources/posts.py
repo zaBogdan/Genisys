@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from models.post import Post
 from schema.posts import PostsSchema
+from config import dataEnc,bcrypt
 
 schemaMany = PostsSchema(many=True)
 schema = PostsSchema()
@@ -45,15 +46,17 @@ class CreatePosts(Resource):
         data = schema.load(request.get_json())
         data.serial = ''.join(random.choices(string.ascii_lowercase + string.digits, k = serial_length)) 
         data.date = datetime.datetime.now()
-        #posts with status "ENCRYPTED" must use some encryption.
+       
+        #encrypting posts, in the needed cases.
         if data.encryptionKey:
-            return "The AES encryption key is {}".format(data.encryptionKey)
-        return "Normal procedure."
-        # try:
-        #     data.save_to_db()
-        #     return {"message": "Post created."},300
-        # except:
-        #     return {"message":"Something went wrong. We can't upload this in our database."},500
+            data.status = 'encrypted'
+            data.content = dataEnc.encodeString(data.content,data.encryptionKey)
+            data.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
+        try:
+            data.save_to_db()
+            return {"message": "Post created."},300
+        except:
+            return {"message":"Something went wrong. We can't upload this in our database."},500
 
 class HandlePosts(Resource):
     def get(self, serial):
@@ -76,6 +79,7 @@ class HandlePosts(Resource):
             post.title = data.title
         if data.content:
             post.content = data.content
+        # You wiull need to update this to encrypt/decrypt posts.
         if data.status:
             post.status = data.status
         try:
@@ -96,27 +100,4 @@ class HandlePosts(Resource):
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
-class EncryptAES():
-    import base64,hashlib
-    # First check to be done here.
-    # from Cryptodome.Cipher import AES
-    # from Cryptodome import Random
-    
-    # BLOCK_SIZE = 16
-    # pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
-    # unpad = lambda s: s[:-ord(s[len(s) - 1:])]
-    
-    # def encrypt(self, raw, password):
-    #     private_key = hashlib.sha256(password.encode("utf-8")).digest()
-    #     raw = pad(raw)
-    #     iv = Random.new().read(AES.block_size)
-    #     cipher = AES.new(private_key, AES.MODE_CBC, iv)
-    #     return base64.b64encode(iv + cipher.encrypt(raw))
-    
-    
-    # def decrypt(self, enc, password):
-    #     private_key = hashlib.sha256(password.encode("utf-8")).digest()
-    #     enc = base64.b64decode(enc)
-    #     iv = enc[:16]
-    #     cipher = AES.new(private_key, AES.MODE_CBC, iv)
-    #     return unpad(cipher.decrypt(enc[16:]))
+# Create a new method to see encrypted posts. 

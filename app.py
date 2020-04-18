@@ -4,7 +4,7 @@ from os import environ
 from marshmallow import ValidationError
 
 # Importing the esential falsk tools
-from config import db, ma
+from config import db, ma,bcrypt
 
 # Importing resources
 from resources.posts import CategoryPosts,CreatePosts,DumpPosts,AuthorPosts,HandlePosts
@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 app.config['SQLALCHEMY_DATABASE_URI']= 'mysql+pymysql://{}:{}@{}/api'.format(
     environ.get('DB_USER'),
     environ.get('DB_PASSWORD'),
-    environ.get('DB_HOST')
+    environ.get('DB_HOSTS')
 )
 
 # Create all tables.
@@ -41,6 +41,7 @@ api.add_resource(HandlePosts, '/post/<string:serial>')
 if __name__ == '__main__':
     db.init_app(app)
     ma.init_app(app)
+    bcrypt.init_app(app)
     app.run(
         debug=True,
         port=1337

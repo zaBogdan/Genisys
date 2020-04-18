@@ -28,6 +28,7 @@ DELETE /author/<name> #Delete an existing author
 
 ### Improvements
 Here is a list of to be done before release:
-- [ ] Add the option of posts to be encrypted
+- [x] Add the option of posts to be encrypted
+- [ ] Add the option for posts to be decrypted. 
 - [ ] Link the posts with the author, by adding foreignKeys
 - [ ] Found a way to store for 30 days the deleted posts. 
