@@ -25,8 +25,20 @@ Here I will define the serial termen, and others if is needed.
 - **Method**: GET
 - **Body**: None
 - **Reponses**:
+Example:
 ```json
-200: {"data": <JSON Object>}
+200: {
+    "data": {
+        "id": 1,
+        "author": "wh0ami",
+        "serial": "9js01a3l",
+        "category": "Information",
+        "date": "2020-04-14T22:51:30",
+        "status": "public",
+        "title": "Is this encryption?",
+        "content": "Trying to not encrypt the text"
+    }
+}
 400: {"message": "This is an encrypted post. To read it's content you must pass the encryption key"} (Bad request)
 404: {"message": "There is no post with this serial. Please recheck."} (Not found)
 ```
@@ -36,6 +48,7 @@ Here I will define the serial termen, and others if is needed.
 - **Method**: GET
 - **Body**: None
 - **Reponses**:
+> The reponse is the same for 200, as in the [Reading public posts](#public-posts)
 ```json
 200: "data": <JSON Object>
 400: {"message": "This post is not encrypted. Everyone can read it."} (Bad request.)
@@ -55,9 +68,19 @@ With the help of this endpoint you can dump the whole posts from the database, o
 ```json
 200: 
 {
-"count" : <int>,
-"data": <JSON Object>
-}
+    "count": 1,
+    "data": [
+        {
+            "id": 6,
+            "author": "wh0am1",
+            "serial": "ow7bpkbh",
+            "category": "Informations",
+            "date": "2020-04-19T21:02:23",
+            "status": "encrypted",
+            "title": "AES encryption be like...",
+            "content": "p2mlZ:EsrI0i0PvDg2eoO8tzAyk88qA1xxuG+n5HDYMIcOuKwfFWMFTwtM="
+        }
+  ]
 404: {"message": "There are no posts yet."} (Not found)
 ```
 
@@ -67,11 +90,23 @@ With the help of this endpoint you can dump the whole posts from the database, o
 - **Method**: GET
 - **Body**: None
 - **Reponses**:
+Example: 
 ```json
 200: 
 {
-"count" : <int>,
-"data": <JSON Object>
+    "count": 2,
+    "data": [
+        {
+            "id": 6,
+            "author": "wh0am1",
+            "serial": "ow7bpkbh",
+            "category": "Informations",
+            "date": "2020-04-19T21:02:23",
+            "status": "encrypted",
+            "title": "AES encryption be like...",
+            "content": "I had to cut it, because it was to long."
+        }
+    ]
 }
 404: {"message": "This author didn't posted yet."} (Not found)
 ```
@@ -82,33 +117,55 @@ With the help of this endpoint you can dump the whole posts from the database, o
 - **Method**: GET
 - **Body**: None
 - **Reponses**:
+Example:
 ```json
 200: 
 {
-"count" : <int>,
-"data": <JSON Object>
+    "count": 1,
+    "data": [
+        {
+            "id": 1,
+            "author": "wh0ami",
+            "serial": "9js01a3l",
+            "category": "Information",
+            "date": "2020-04-14T22:51:30",
+            "status": "public",
+            "title": "Is this encryption?",
+            "content": "Trying to not encrypt the text"
+        }
+    ]
 }
 404: {"message": "There are no posts in this category yet."} (Not found)
 ```
 
 ## Creating
 With this endpoint, you can add different posts in our database. 
-> Note: If you want to encrypt a post from this stage, setting the `encryptionKey` will be enough. The status will be overwritten by default to `encrypted` when you have that parameter.  
+> Note: If you want to encrypt a post from this stage, setting the [`encryptionKey`](#reading-by-serial) will be enough. The status will be overwritten by default to `encrypted` when you have that parameter.  
 
 - **Endpoint**: `/post`
 - **Method**: POST
 - **Body**: 
+Creating a public post, without encryption
 ```JSON
 {
-	"author": "",
-	"status": "",
-	"category": "",
-	"content": "",
-	"title": "",
-	"encryptionKey": ""
+	"author": "wh0am1",
+	"status": "public",
+	"category": "API",
+	"content": "Lore Ipsum",
+	"title": "Public data for everyone"
 }
 ```
-> Note: `encryptionKey` is optional and it's only for encryption (obviously...). You can just ignore it if you make a `public` post. 
+Creating an encrypted content
+```JSON
+{
+	"author": "wh0am1",
+	"status": "encrypted",
+	"category": "API",
+	"content": "Lore ipsum",
+	"title": "Secured data. Key Only!",
+	"encryptionKey": "s3cur3@K3y"
+}
+```
 - **Reponses**:
 ```JSON
 201: {"message": "Post created with serial <serial>."} 
@@ -127,20 +184,20 @@ If you want to make some changes you can just find and update them using the pos
 This is just for updating a regular post
 ```JSON
 {
-	"status": "",
-	"category": "",
-	"title": "",
-	"content": ""
+	"status": "public",
+	"category": "API",
+	"title": "Lol? New post",
+	"content": "Lore ipsum"
 }
 ```
 And this is how you encrypt a public post with this method. Parameter `encryptionKey` is a must and it can be empty. Without him it will throw an error. Note that you can only pass `status` and `encryptionKey` to do the encryption. 
 ```JSON
 {
 	"status": "encrypted",
-	"category": "",
-	"title": "",
-	"content": "",
-	"encryptionKey": ""
+	"category": "API",
+	"title": "Encrypting with AES",
+	"content": "Lore ipsum",
+	"encryptionKey": "s3cur3@K3y"
 }
 ```
 - **Reponses**:
@@ -160,9 +217,9 @@ And this is how you encrypt a public post with this method. Parameter `encryptio
 This is just for updating a regular encrypted post, all these fields are optional. You can update only one at a time. 
 ```JSON
 {
-	"title": "",
-	"content": "",
-	"category": ""
+	"title": "This is a test",
+	"content": "Lore ipsum",
+	"category": "API"
 }
 ```
 And this is how to decrypt this post. The `status` can be anything else. This is the check: `data.status != 'encrypted'`
