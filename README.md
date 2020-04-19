@@ -1,5 +1,8 @@
 # zaBogdan - Backend API
 
+
+### Documentation
+Docs are located at: [Endpoints](Endpoints.md)
 ### Endpoints
 Posts ( All are GET Requests)
 ```
@@ -29,6 +32,6 @@ DELETE /author/<name> #Delete an existing author
 ### Improvements
 Here is a list of to be done before release:
 - [x] Add the option of posts to be encrypted
-- [ ] Add the option for posts to be decrypted. 
+- [x] Add the option for posts to be decrypted. 
 - [ ] Link the posts with the author, by adding foreignKeys
 - [ ] Found a way to store for 30 days the deleted posts. 

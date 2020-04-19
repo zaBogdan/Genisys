@@ -26,14 +26,5 @@ class DataEncryption:
         decryptedString = unpad(cipher.decrypt(text), AES.block_size)
         return decryptedString.decode('utf8')
 
-# enc = DataEncryption()
-# data = 'Trying to not encrypt the text'
-# key = 'abfc370ab633974ac2ace45cd55620a9'
-# encryptedData = enc.encodeString(data,key)
-# decryptedData = enc.decodeString(encryptedData,key)
-
-# print("RawData: {}".format(data))
-# print("EncryptedData: {}".format(encryptedData))
-# print("Decoded data: {}".format(decryptedData))
 
 

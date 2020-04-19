@@ -63,25 +63,49 @@ class HandlePosts(Resource):
         data = Post.find_by_serial(serial)
         if not data:
             return {"message": "There is no post with this serial. Please recheck."}, 404
+        if data.status == 'encrypted':
+            return {"message": 
+            "This is an encrypted post. To read it's content you must pass the encryption key"},400
         return {
             "data": schema.dump(data)
-        }
+        },200
 
     def put(self, serial):
         schema = PostsSchema(partial=True)
         post = Post.find_by_serial(serial)
         if not post:
             return {"message": "There is no post with this serial. Please recheck."}, 404
-        data = schema.load(request.get_json())
 
+        #Working only with public data.
+        if post.status=='encrypted':
+            return {"message": "To make any changes to this post you must pass the encryption key."},400
+        
+        data = schema.load(request.get_json())
+        
         # You can update only title,content and status
         if data.title:
             post.title = data.title
         if data.content:
             post.content = data.content
-        # You wiull need to update this to encrypt/decrypt posts.
+
+        # if you update the status, and pass an encryption key you will encrypt the post. else it will
+        # just be changed. 
         if data.status:
-            post.status = data.status
+            if data.status == 'encrypted':
+                if data.encryptionKey:
+                    try:
+                        post.status = 'encrypted'
+                        post.content = dataEnc.encodeString(post.content, data.encryptionKey)
+                        post.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
+                    except:
+                        return {"message": "There was an error with the encryption. Try again."},500
+                else:
+                    return {
+                        "message": "You don't have the encryptionKey. We can't encrypt a message without it."
+                    }, 400
+            else:
+                post.status=data.status
+        
         try:
             post.save_to_db()
             return {"message": "Post with serial {} has been updated in our database".format(serial)},300
@@ -96,8 +120,56 @@ class HandlePosts(Resource):
         post.status = 'deleted'
         try:
             post.save_to_db()
-            return {"message": "Post with serial {} has been purged from our database".format(serial)},300
+            return {"message": "Post with serial {} has been purged from our database".format(serial)},202
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
 # Create a new method to see encrypted posts. 
+class ReadEncrypted(Resource):
+    def get(self, serial, key):
+        data = Post.find_by_serial(serial)
+        if not data:
+            return {"message": "There is no post with this serial. Please recheck."}, 404
+        if data.status != 'encrypted':
+            return {"message": "This post is not encrypted. Everyone can read it."},400
+
+        if bcrypt.check_password_hash(data.encryptionKey, key):
+            data.content = dataEnc.decodeString(data.content, key)
+        else:
+            return {"message": "That's the wrong key. We can't decrypt the message."},401
+        
+        return {
+            "data": schema.dump(data)
+        }
+    
+    def put(self, serial,key):
+        schema = PostsSchema(partial=True)
+        post = Post.find_by_serial(serial)
+        if not post:
+            return {"message": "There is no post with this serial. Please recheck."},404
+        if post.status != 'encrypted':
+            return {"message": "This post is not encrypted. Everyone can read it."},400
+        if not bcrypt.check_password_hash(post.encryptionKey, key):
+            return {"message": "This is the wrong key. We can't decrypt the message, so you can't edit it."}, 401
+        
+        data = schema.load(request.get_json())
+        
+        #You can change the title,category, content and status.
+        if data.title:
+            post.title = data.title
+        
+        if data.category:
+            post.category = data.category
+        if data.content:
+            post.content = dataEnc.encodeString(data.content, key)
+
+        if data.status != 'encrypted':
+            post.encryptionKey = None #Removing the encryption key.
+            post.content = dataEnc.decodeString(post.content, key)
+            post.status = data.status
+
+        try:
+            post.save_to_db()
+            return {"message": "Post with serial {} has been updated in our database.".format(serial)},202
+        except:
+            return {"message":"Something went wrong. We can't upload this in our database."},500

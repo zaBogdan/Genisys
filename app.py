@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 from config import db, ma,bcrypt
 
 # Importing resources
-from resources.posts import CategoryPosts,CreatePosts,DumpPosts,AuthorPosts,HandlePosts
+from resources.posts import CategoryPosts,CreatePosts,DumpPosts,AuthorPosts,HandlePosts,ReadEncrypted
 
 app = Flask(__name__)
 api = Api(app)
@@ -36,7 +36,11 @@ api.add_resource(DumpPosts, '/posts')
 
 #Creating posts
 api.add_resource(CreatePosts, '/post')
+
+#Reading by serial
 api.add_resource(HandlePosts, '/post/<string:serial>')
+#Reading encrypted data by serial, with the key
+api.add_resource(ReadEncrypted, '/post/<string:serial>/<string:key>')
 
 if __name__ == '__main__':
     db.init_app(app)
