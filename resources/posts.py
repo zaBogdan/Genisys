@@ -12,7 +12,7 @@ class CategoryPosts(Resource):
     def get(self, name):
         data = Post.find_by_category(name)
         if not data:
-            return {"message": "There are no posts yet."},404
+            return {"message": "There are no posts in this category yet."},404
         return {
             'category_name': name,
             'count': len(data),
@@ -25,7 +25,6 @@ class AuthorPosts(Resource):
         if not data:
             return {"message": "This author didn't posted yet."},404
         return {
-            'author': name,
             'count': len(data),
             'data': schemaMany.dump(data)
         }
@@ -54,7 +53,7 @@ class CreatePosts(Resource):
             data.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
         try:
             data.save_to_db()
-            return {"message": "Post created."},300
+            return {"message": "Post created with serial `{}`.".format(data.serial)},201
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
@@ -82,11 +81,13 @@ class HandlePosts(Resource):
         
         data = schema.load(request.get_json())
         
-        # You can update only title,content and status
+        # You can update only title,content and status and category.
         if data.title:
             post.title = data.title
         if data.content:
             post.content = data.content
+        if data.category:
+            post.category = data.category
 
         # if you update the status, and pass an encryption key you will encrypt the post. else it will
         # just be changed. 
@@ -108,7 +109,7 @@ class HandlePosts(Resource):
         
         try:
             post.save_to_db()
-            return {"message": "Post with serial {} has been updated in our database".format(serial)},300
+            return {"message": "Post with serial `{}` has been updated in our database".format(serial)},200
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
@@ -120,7 +121,7 @@ class HandlePosts(Resource):
         post.status = 'deleted'
         try:
             post.save_to_db()
-            return {"message": "Post with serial {} has been purged from our database".format(serial)},202
+            return {"message": "Post with serial `{}` has been purged from our database".format(serial)},202
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
@@ -170,6 +171,6 @@ class ReadEncrypted(Resource):
 
         try:
             post.save_to_db()
-            return {"message": "Post with serial {} has been updated in our database.".format(serial)},202
+            return {"message": "Post with serial `{}` has been updated in our database.".format(serial)},200
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500

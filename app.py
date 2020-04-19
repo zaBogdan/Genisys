@@ -32,7 +32,7 @@ def handle_marshmallow_validation(err):
 #Dumping posts by different stuff
 api.add_resource(CategoryPosts, '/posts/category/<string:name>')
 api.add_resource(AuthorPosts, '/posts/author/<string:name>')
-api.add_resource(DumpPosts, '/posts')
+api.add_resource(DumpPosts, '/posts/all')
 
 #Creating posts
 api.add_resource(CreatePosts, '/post')
