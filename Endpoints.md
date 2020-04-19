@@ -1,4 +1,5 @@
 # Endpoints documentation
+
 1. [Posts](#posts)
     - [Reading by serial](#reading-by-serial)
         - [Reading public posts](#public-posts)
@@ -11,13 +12,15 @@
     - [Updating](#updating)
         -[Updating public posts](#updating-public-posts)
         -[Updating encrypted posts](#updating-encrypted-posts)
+2. [Articles](#articles)
 
 # Posts
 This category handles all the thing related to reading/creating/updating/deleting content from the database. The methods support AES encryption. All of the requests take in and reponde with **JSON** data. 
 
 ## Reading by serial
 Here I will define the serial termen, and others if is needed.
-`serial` is a way of indexing data, wich can handle up to 36 at 8th power different variables. It can only contain lower ascii letters (a-z) and all digits(0-9). This can not be changed anytime, so it's bound to the post (it doesn't matter that the title or author changes) all the time.
+- `serial` is a way of indexing data, wich can handle up to 36 at 8th power different variables. It can only contain lower ascii letters (a-z) and all digits(0-9). This can not be changed anytime, so it's bound to the post (it doesn't matter that the title or author changes) all the time.
+- 'encryptionKey' is used for the encryption algorithm (AES) and it must be different for each encryption. This is stored in the database as a BCRYPT hash, for security purposes. Even if the databases is breached, all the content is secure.
 
 ### Public posts
 - **Description**: You can read posts by it's serial attribute, look up at the [serial definition](#reading-by-serial). You will retrieve only one post from this method and it must not have the status 'encrypted'.  
@@ -51,9 +54,9 @@ Example:
 > The reponse is the same for 200, as in the [Reading public posts](#public-posts)
 ```json
 200: "data": <JSON Object>
-400: {"message": "This post is not encrypted. Everyone can read it."} (Bad request.)
-401: {"message": "That's the wrong key. We can't decrypt the message."} (Unauthorized)
-404: {"message": "There is no post with this serial. Please recheck."} (Not found)
+400: {"message": "This post is not encrypted. Everyone can read it."}
+401: {"message": "That's the wrong key. We can't decrypt the message."}
+404: {"message": "There is no post with this serial. Please recheck."}
 ```
 
 ## Dumping posts
@@ -65,6 +68,7 @@ With the help of this endpoint you can dump the whole posts from the database, o
 - **Method**: GET
 - **Body**: None
 - **Reponses**:
+Example: 
 ```json
 200: 
 {
@@ -81,7 +85,7 @@ With the help of this endpoint you can dump the whole posts from the database, o
             "content": "p2mlZ:EsrI0i0PvDg2eoO8tzAyk88qA1xxuG+n5HDYMIcOuKwfFWMFTwtM="
         }
   ]
-404: {"message": "There are no posts yet."} (Not found)
+404: {"message": "There are no posts yet."}
 ```
 
 ### Dumping by Author
@@ -108,7 +112,7 @@ Example:
         }
     ]
 }
-404: {"message": "This author didn't posted yet."} (Not found)
+404: {"message": "This author didn't posted yet."}
 ```
 
 ### Dumping by Category
@@ -135,7 +139,7 @@ Example:
         }
     ]
 }
-404: {"message": "There are no posts in this category yet."} (Not found)
+404: {"message": "There are no posts in this category yet."}
 ```
 
 ## Creating
@@ -236,3 +240,6 @@ And this is how to decrypt this post. The `status` can be anything else. This is
 404: {"message": "There is no post with this serial. Please recheck."}
 500: {"message":"Something went wrong. We can't upload this in our database."}
 ```
+
+# Articles
+- [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
