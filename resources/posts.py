@@ -14,7 +14,6 @@ class CategoryPosts(Resource):
         if not data:
             return {"message": "There are no posts in this category yet."},404
         return {
-            'category_name': name,
             'count': len(data),
             'data': schemaMany.dump(data)
         }
