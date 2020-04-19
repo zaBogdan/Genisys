@@ -10,8 +10,8 @@
         - [Dumping by category](#dumping-by-category)
     - [Creating](#creating)
     - [Updating](#updating)
-        -[Updating public posts](#updating-public-posts)
-        -[Updating encrypted posts](#updating-encrypted-posts)
+    	-[Updating public posts](#updating-public-posts)
+	-[Updating encrypted posts](#updating-encrypted-posts)
 2. [Articles](#articles)
 
 # Posts
