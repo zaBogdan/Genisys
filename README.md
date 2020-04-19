@@ -1,37 +1,41 @@
 # zaBogdan - Backend API
 
+This is the core of my website backend. It will handle Authorization, CRUD operations, Mailing, Logging and much more. This is written in Python3 using as main framework Flask. 
 
-### Documentation
-Docs are located at: [Endpoints](Endpoints.md)
+> !!For now this file isn't finished.!!
+
+### Instalation
+The hole projected was coded on a NIX based system, macOS to be specific, but it can be run on each an every system which has [python](https://www.python.org/) and [pipenv](https://pypi.org/project/pipenv/) installed. It's also using a **MySQL** database so you must have one installed on the machine or over the network. 
+
+1. Clone this repository using: `git clone git@github.com:zaBogdan/zaApi.git`
+2. Fire up a console, go to the directory and type `pipenv install`
+3. From now you will use `pipenv shell` to have the virtual environment of python
+4. To run the app just use `python app.py`
+
+> Note: Before you run the app you need to setup the `.env` file, which should be in the root folder. You have a file called `.env.example` for that.
+
 ### Endpoints
-Posts ( All are GET Requests)
-```
-/posts/category/<name> #All posts from a specific category
-/posts/author/<name> #All posts created by an author
-/posts #All post from the database with public status
-```
+I decided not to oversize this file and I created a new one with all endpoints of this API documented and with examples. All the reponses from each call can be found in here to. For further more you can look [here](Endpoints.md).
 
-Post
-```
-GET /post/<id> #Get a post by serial id
-PUT /post/<id> #Update a pust by id
-DELETE /post/<id> #Delete a post by its id
-POST /post #Create a new post
-```
-
-Authors (TBD)
-```
-GET /author/<name> #Information about specific author & his posts
-POST /author/<name> #Create a new author
-PUT /author/<name> #Update author information
-DELETE /author/<name> #Delete an existing author
-```
-
-> All so called `Deletes` will be moved in `Archived` Database, with specific encryption
+> Note: Here you can found only the working endpoints that have been tested and are 100% functional. For the **others**, which are in development or to be done, check down in this file, at [Developing](#developing). 
 
 ### Improvements
-Here is a list of to be done before release:
-- [x] Add the option of posts to be encrypted
+This needs to be done before of the releasing date, which is not yet known. It's a high change to be around the 1'st May. 
+- [x] Add the option for posts to be encrypted
 - [x] Add the option for posts to be decrypted. 
 - [ ] Link the posts with the author, by adding foreignKeys
-- [ ] Found a way to store for 30 days the deleted posts. 
+- [ ] Find a way to store for 30 days the deleted posts. 
+- [ ] Secure the API
+- [ ] Add some role system 
+
+### Developing
+None of the following can be used in a production enviroment. Some are full of bugs or not yet started. For the working ones you can check [Endpoints Docs](Endpoints.md)
+
+1. Posts
+    - DELETE /post/<id> #Delete a post by its id
+2. Authors
+    - GET /author/<name> #Information about specific author & his posts
+    - POST /author/<name> #Create a new author
+    - PUT /author/<name> #Update author information
+    - DELETE /author/<name> #Delete an existing author
+
