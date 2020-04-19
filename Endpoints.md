@@ -10,8 +10,8 @@
         - [Dumping by category](#dumping-by-category)
     - [Creating](#creating)
     - [Updating](#updating)
-    	-[Updating public posts](#updating-public-posts)
-	-[Updating encrypted posts](#updating-encrypted-posts)
+    	- [Updating public posts](#updating-public-posts)
+        - [Updating encrypted posts](#updating-encrypted-posts)
 2. [Articles](#articles)
 
 # Posts
@@ -30,7 +30,7 @@ Here I will define the serial termen, and others if is needed.
 - **Reponses**:
 Example:
 ```json
-200: {
+200: 
     "data": {
         "id": 1,
         "author": "wh0ami",
