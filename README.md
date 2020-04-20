@@ -2,8 +2,6 @@
 
 This is the core of my website backend. It will handle Authorization, CRUD operations, Mailing, Logging and much more. This is written in Python3 using as main framework Flask. 
 
-> !!For now this file isn't finished.!!
-
 ### Instalation
 The hole projected was coded on a NIX based system, macOS to be specific, but it can be run on each an every system which has [python](https://www.python.org/) and [pipenv](https://pypi.org/project/pipenv/) installed. It's also using a **MySQL** database so you must have one installed on the machine or over the network. 
 
@@ -23,19 +21,17 @@ I decided not to oversize this file and I created a new one with all endpoints o
 This needs to be done before of the releasing date, which is not yet known. It's a high change to be around the 1'st May. 
 - [x] Add the option for posts to be encrypted
 - [x] Add the option for posts to be decrypted. 
-- [ ] Link the posts with the author, by adding foreignKeys
+- [x] Link the posts with the author, by adding foreignKeys
 - [ ] Find a way to store for 30 days the deleted posts. 
-- [ ] Secure the API
-- [ ] Add some role system 
+- [x] Secure the API
+- [ ] Add some role system
+- [ ] Add activity feature (using the access & refresh tokens)
+- [ ] Add a monitoring system and be able to recieve it (MongoDB maybe)
 
 ### Developing
 None of the following can be used in a production enviroment. Some are full of bugs or not yet started. For the working ones you can check [Endpoints Docs](Endpoints.md)
 
 1. Posts
-    - DELETE /post/<id> #Delete a post by its id
+    - Delete a post by its id
 2. Authors
-    - GET /author/<name> #Information about specific author & his posts
-    - POST /author/<name> #Create a new author
-    - PUT /author/<name> #Update author information
-    - DELETE /author/<name> #Delete an existing author
-
+    - Logout an user, revoking it's credentials.

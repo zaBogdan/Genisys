@@ -5,16 +5,27 @@
         - [Reading public posts](#public-posts)
         - [Reading encrypted posts](#encrypted-posts)
     - [Dumping posts](#dumping-posts)
-        - [Dump all](#dump-all)
+        - [Dump all](#dump-all-posts)
         - [Dumping by author](#dumping-by-author)
         - [Dumping by category](#dumping-by-category)
     - [Creating](#creating)
     - [Updating](#updating)
     	- [Updating public posts](#updating-public-posts)
         - [Updating encrypted posts](#updating-encrypted-posts)
-2. [Articles](#articles)
+2. [Users](#users)
+    - [Account](#account)
+        - [Registering new accounts](#register)
+        - [Logging in](#login)
+        - [Update user information](#edit-user-by-uuid)
+    - [Tokens](#tokens)
+        - [Refresh tokens](#refresh-tokens)
+        - [Access token with Fres status](#fresh-access-token)
+    - [Dumping users](#dumping-users)
+        - [Dump all](#dump-all-users)
+        - [Dump by UUID](#dump-by-uuid)
+3. [Articles](#articles)
 
-# Posts
+# Posts (some changes needed!)
 This category handles all the thing related to reading/creating/updating/deleting content from the database. The methods support AES encryption. All of the requests take in and reponde with **JSON** data. 
 
 ## Reading by serial
@@ -62,7 +73,7 @@ Example:
 ## Dumping posts
 With the help of this endpoint you can dump the whole posts from the database, or you can add filters. 
 > Note: Both encrypted & public posts will be dumped. 
-### Dump All
+### Dump all posts
 - **Description**: You can dump all the posts from our database. They are sorted by the last created at the time of request. 
 - **Endpoint**: `/posts/all`
 - **Method**: GET
@@ -143,7 +154,7 @@ Example:
 ```
 
 ## Creating
-With this endpoint, you can add different posts in our database. 
+With this endpoint, you can add different posts in our database. For security resons we will check if the author is in our database and if he is makeing the request. 
 > Note: If you want to encrypt a post from this stage, setting the [`encryptionKey`](#reading-by-serial) will be enough. The status will be overwritten by default to `encrypted` when you have that parameter.  
 
 - **Endpoint**: `/post`
@@ -173,12 +184,13 @@ Creating an encrypted content
 - **Reponses**:
 ```JSON
 201: {"message": "Post created with serial <serial>."} 
+401: {"message": "You are logged in as <name>. You can't make posts with other usernames."}
 500: {"message":"Something went wrong. We can't upload this in our database."}
 ```
 
 ## Updating
 If you want to make some changes you can just find and update them using the post's [serial](#reading-by-serial) code. We will have two methods, because we are working with encrypted and public content.
-> Note: With this method you can change the status of the content ( For example if you want to transform an `encypted` post to  `public` and vice versa.
+> Note: With this method you can change the status of the content ( For example if you want to transform an `encypted` post to  `public` and vice versa. )
 
 ### Updating public posts
 - **Description**: With this method you can only change the Title, Content, Status and Category. By changing the `status` you can also encrypt the posts. If the post is encrypted you might want to look into [Updating encrypted posts](#updating-encrypted-posts)
@@ -240,6 +252,9 @@ And this is how to decrypt this post. The `status` can be anything else. This is
 404: {"message": "There is no post with this serial. Please recheck."}
 500: {"message":"Something went wrong. We can't upload this in our database."}
 ```
+
+# Users
+No be updated.
 
 # Articles
 - [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)

@@ -1,17 +1,17 @@
 from config import db
-
 class Post(db.Model):
     __tablename__ = "posts"
 
     id = db.Column(db.Integer, primary_key=True)
     serial = db.Column(db.String(15), nullable=False,unique=True)
-    author = db.Column(db.String(20), nullable=False)
+    author_id = db.Column(db.Integer(), db.ForeignKey("users.id"), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     status = db.Column(db.String(15), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     category = db.Column(db.String(20), nullable=False)
     content = db.Column(db.Text, nullable=False)
     encryptionKey = db.Column(db.String(255))
+    author = db.relationship("User")
 
     @classmethod
     def find_by_category(cls, name):
@@ -19,7 +19,7 @@ class Post(db.Model):
 
     @classmethod
     def find_by_author(cls, name):
-        return cls.query.filter_by(author=name).order_by(Post.date.desc()).all()
+        return cls.query.filter_by(author_id=name).all()
 
     @classmethod
     def find_by_serial(cls, serial):

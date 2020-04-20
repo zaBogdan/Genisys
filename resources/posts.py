@@ -1,6 +1,8 @@
 from flask import request
 from flask_restful import Resource
+from flask_jwt_extended import jwt_required, fresh_jwt_required, get_jwt_identity
 from models.post import Post
+from models.user import User
 from schema.posts import PostsSchema
 from config import dataEnc,bcrypt
 
@@ -16,17 +18,20 @@ class CategoryPosts(Resource):
         return {
             'count': len(data),
             'data': schemaMany.dump(data)
-        }
+        },200
 
 class AuthorPosts(Resource):
     def get(self, name):
-        data = Post.find_by_author(name)
+        user = User.find_by_name(name)
+        if not id:
+            return {"message": "This author didn't posted yet."}
+        data = Post.find_by_author(user.id)
         if not data:
             return {"message": "This author didn't posted yet."},404
         return {
             'count': len(data),
             'data': schemaMany.dump(data)
-        }
+        },200
 
 class DumpPosts(Resource):
     def get(self):
@@ -39,19 +44,27 @@ class DumpPosts(Resource):
         },200
 
 class CreatePosts(Resource):
+    @jwt_required
     def post(self):
         import string, random,datetime
         data = schema.load(request.get_json())
         data.serial = ''.join(random.choices(string.ascii_lowercase + string.digits, k = serial_length)) 
         data.date = datetime.datetime.now()
-       
+
+        #Handling the author stuff
+        from schema.users import UserSchema
+        authorData = User.find_by_uuid(get_jwt_identity())
+        data.author_id = authorData.id
+
         #encrypting posts, in the needed cases.
         if data.encryptionKey:
             data.status = 'encrypted'
             data.content = dataEnc.encodeString(data.content,data.encryptionKey)
             data.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
         try:
-            data.save_to_db()
+            data.save_to_db() #save the post
+            authorData.activity +=1 #increment the activity
+            authorData.save_to_db() #save it 
             return {"message": "Post created with serial `{}`.".format(data.serial)},201
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
@@ -67,7 +80,7 @@ class HandlePosts(Resource):
         return {
             "data": schema.dump(data)
         },200
-
+    @jwt_required
     def put(self, serial):
         schema = PostsSchema(partial=True)
         post = Post.find_by_serial(serial)
@@ -112,7 +125,9 @@ class HandlePosts(Resource):
         except:
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
+    @fresh_jwt_required
     def delete(self, serial):
+        return {"message": "Method is still not implemented."}, 500
         post = Post.find_by_serial(serial)
         if not post:
             return {"message": "There is no post with this serial. Please recheck."}, 404
@@ -142,6 +157,7 @@ class ReadEncrypted(Resource):
             "data": schema.dump(data)
         }
     
+    @jwt_required
     def put(self, serial,key):
         schema = PostsSchema(partial=True)
         post = Post.find_by_serial(serial)
@@ -163,11 +179,10 @@ class ReadEncrypted(Resource):
         if data.content:
             post.content = dataEnc.encodeString(data.content, key)
 
-        if data.status != 'encrypted':
+        if data.status and data.status != 'encrypted':
             post.encryptionKey = None #Removing the encryption key.
             post.content = dataEnc.decodeString(post.content, key)
             post.status = data.status
-
         try:
             post.save_to_db()
             return {"message": "Post with serial `{}` has been updated in our database.".format(serial)},200

@@ -16,6 +16,7 @@ python-dotenv = "*"
 pymysql = "*"
 pycryptodomex = "*"
 flask-bcrypt = "*"
+flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.7"

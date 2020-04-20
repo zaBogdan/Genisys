@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "35683220b86897888d9220890755e6133f04619bee97345ea1a2e27e5ad2d0d8"
+            "sha256": "769fc14314c674e02f3d5b9404a28dc944f9239b336ff1019cdf52b84d3ed28b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -107,6 +107,13 @@
             ],
             "index": "pypi",
             "version": "==0.7.1"
+        },
+        "flask-jwt-extended": {
+            "hashes": [
+                "sha256:0aa8ee6fa7eb3be9314e39dd199ac8e19389a95371f9d54e155c7aa635e319dd"
+            ],
+            "index": "pypi",
+            "version": "==3.24.1"
         },
         "flask-marshmallow": {
             "hashes": [
@@ -281,6 +288,13 @@
             ],
             "index": "pypi",
             "version": "==3.9.7"
+        },
+        "pyjwt": {
+            "hashes": [
+                "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e",
+                "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
+            ],
+            "version": "==1.7.1"
         },
         "pylint": {
             "hashes": [
