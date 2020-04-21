@@ -19,13 +19,13 @@
         - [Update user information](#edit-user-by-uuid)
     - [Tokens](#tokens)
         - [Refresh tokens](#refresh-tokens)
-        - [Access token with Fres status](#fresh-access-token)
+        - [Access token with Fresh status](#fresh-token)
     - [Dumping users](#dumping-users)
         - [Dump all](#dump-all-users)
         - [Dump by UUID](#dump-by-uuid)
 3. [Articles](#articles)
 
-# Posts (some changes needed!)
+# Posts
 This category handles all the thing related to reading/creating/updating/deleting content from the database. The methods support AES encryption. All of the requests take in and reponde with **JSON** data. 
 
 ## Reading by serial
@@ -42,15 +42,23 @@ Here I will define the serial termen, and others if is needed.
 Example:
 ```json
 200: 
+{
     "data": {
+        "title": "Public second user third post",
+        "author": {
+            "username": "test",
+            "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+            "activity": 3,
+            "id": 1,
+            "email": "test@test.ro"
+        },
         "id": 1,
-        "author": "wh0ami",
-        "serial": "9js01a3l",
-        "category": "Information",
-        "date": "2020-04-14T22:51:30",
         "status": "public",
-        "title": "Is this encryption?",
-        "content": "Trying to not encrypt the text"
+        "date": "2020-04-20T20:31:03",
+        "content": "Lore Ipsum",
+        "author_id": 1,
+        "serial": "q8qvm84r",
+        "category": "API"
     }
 }
 400: {"message": "This is an encrypted post. To read it's content you must pass the encryption key"} (Bad request)
@@ -64,7 +72,26 @@ Example:
 - **Reponses**:
 > The reponse is the same for 200, as in the [Reading public posts](#public-posts)
 ```json
-200: "data": <JSON Object>
+200:
+{
+    "data": {
+        "title": "Lol? New post",
+        "author": {
+            "username": "test",
+            "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+            "activity": 3,
+            "id": 1,
+            "email": "test@test.ro"
+        },
+        "id": 2,
+        "status": "encrypted",
+        "date": "2020-04-21T01:00:24",
+        "content": "Lore ipsum is just for testing the AES encryption. ",
+        "author_id": 1,
+        "serial": "ysxtdnxl",
+        "category": "API"
+    }
+}
 400: {"message": "This post is not encrypted. Everyone can read it."}
 401: {"message": "That's the wrong key. We can't decrypt the message."}
 404: {"message": "There is no post with this serial. Please recheck."}
@@ -86,16 +113,24 @@ Example:
     "count": 1,
     "data": [
         {
-            "id": 6,
-            "author": "wh0am1",
-            "serial": "ow7bpkbh",
-            "category": "Informations",
-            "date": "2020-04-19T21:02:23",
+            "title": "Secured data. Key Only!",
+            "author": {
+                "username": "test",
+                "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+                "activity": 3,
+                "id": 1,
+                "email": "test@test.ro"
+            },
+            "id": 3,
             "status": "encrypted",
-            "title": "AES encryption be like...",
-            "content": "p2mlZ:EsrI0i0PvDg2eoO8tzAyk88qA1xxuG+n5HDYMIcOuKwfFWMFTwtM="
+            "date": "2020-04-21T01:07:45",
+            "content": "dGlMCc/faqNL0OPfeqspGg==:5JI7VTbuIqrHe2PZFRkEZA==",
+            "author_id": 1,
+            "serial": "i07z2sbq",
+            "category": "API"
         }
-  ]
+    ]
+}
 404: {"message": "There are no posts yet."}
 ```
 
@@ -109,17 +144,24 @@ Example:
 ```json
 200: 
 {
-    "count": 2,
+    "count": 1,
     "data": [
         {
-            "id": 6,
-            "author": "wh0am1",
-            "serial": "ow7bpkbh",
-            "category": "Informations",
-            "date": "2020-04-19T21:02:23",
+            "date": "2020-04-21T01:07:45",
+            "title": "Secured data. Key Only!",
             "status": "encrypted",
-            "title": "AES encryption be like...",
-            "content": "I had to cut it, because it was to long."
+            "category": "API",
+            "author": {
+                "email": "test@test.ro",
+                "activity": 3,
+                "username": "test",
+                "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+                "id": 1
+            },
+            "serial": "i07z2sbq",
+            "id": 3,
+            "content": "dGlMCc/faqNL0OPfeqspGg==:5JI7VTbuIqrHe2PZFRkEZA==",
+            "author_id": 1
         }
     ]
 }
@@ -139,14 +181,21 @@ Example:
     "count": 1,
     "data": [
         {
-            "id": 1,
-            "author": "wh0ami",
-            "serial": "9js01a3l",
-            "category": "Information",
-            "date": "2020-04-14T22:51:30",
-            "status": "public",
-            "title": "Is this encryption?",
-            "content": "Trying to not encrypt the text"
+            "serial": "i07z2sbq",
+            "author": {
+                "email": "test@test.ro",
+                "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+                "activity": 3,
+                "id": 1,
+                "username": "test"
+            },
+            "author_id": 1,
+            "content": "dGlMCc/faqNL0OPfeqspGg==:5JI7VTbuIqrHe2PZFRkEZA==",
+            "status": "encrypted",
+            "id": 3,
+            "title": "Secured data. Key Only!",
+            "category": "API",
+            "date": "2020-04-21T01:07:45"
         }
     ]
 }
@@ -159,32 +208,32 @@ With this endpoint, you can add different posts in our database. For security re
 
 - **Endpoint**: `/post`
 - **Method**: POST
+- **Securiy**: This method requires a security header `Authorization: Bearer {access_token}`, which you can get at [logining in](#login) or at [refreshing](#refresh-tokens). Any `access token` that is valid will be accepted.
 - **Body**: 
 Creating a public post, without encryption
 ```JSON
 {
-	"author": "wh0am1",
 	"status": "public",
 	"category": "API",
 	"content": "Lore Ipsum",
-	"title": "Public data for everyone"
+	"title": "Public second user third post"
 }
 ```
 Creating an encrypted content
 ```JSON
 {
-	"author": "wh0am1",
 	"status": "encrypted",
 	"category": "API",
 	"content": "Lore ipsum",
 	"title": "Secured data. Key Only!",
-	"encryptionKey": "s3cur3@K3y"
+	"encryptionKey": "x60ad5d46d54665b50466a939bff1b35"
 }
 ```
 - **Reponses**:
 ```JSON
 201: {"message": "Post created with serial <serial>."} 
-401: {"message": "You are logged in as <name>. You can't make posts with other usernames."}
+401: {"msg": "Token has expired"}
+401: {"msg": "Missing Authorization Header"}
 500: {"message":"Something went wrong. We can't upload this in our database."}
 ```
 
@@ -196,6 +245,7 @@ If you want to make some changes you can just find and update them using the pos
 - **Description**: With this method you can only change the Title, Content, Status and Category. By changing the `status` you can also encrypt the posts. If the post is encrypted you might want to look into [Updating encrypted posts](#updating-encrypted-posts)
 - **Endpoint**: `/posts/<serial>`
 - **Method**: PUT
+- **Securiy**: This method requires a security header `Authorization: Bearer {access_token}`, which you can get at [logining in](#login) or at [refreshing](#refresh-tokens). Any `access token` that is valid will be accepted. 
 - **Body**: 
 This is just for updating a regular post
 ```JSON
@@ -221,6 +271,8 @@ And this is how you encrypt a public post with this method. Parameter `encryptio
 200: {"message": "Post with serial `<serial>` has been updated in our database"}
 400: {"message": "To make any changes to this post you must pass the encryption key."}
 400: {"message": "You don't have the encryptionKey. We can't encrypt a message without it."}
+401: {"msg": "Token has expired"}
+401: {"msg": "Missing Authorization Header"}
 404: {"message": "There is no post with this serial. Please recheck."}
 500: {"message": "There was an error with the encryption. Try again."}
 500: {"message":"Something went wrong. We can't upload this in our database."}
@@ -229,6 +281,7 @@ And this is how you encrypt a public post with this method. Parameter `encryptio
 - **Description**: With this method you can only change the Title, Content, Status and Category. By changing the `status` you can also decrypt the posts. If the post is not encrypted you might want to look into [Updating public posts](#updating-public-posts)
 - **Endpoint**: `/posts/<serial>/<key>`
 - **Method**: PUT
+- **Securiy**: This method requires a security header `Authorization: Bearer {access_token}`, which you can get at [logining in](#login) or at [refreshing](#tokens). Any [access token](#token) that is valid will be accepted.
 - **Body**: 
 This is just for updating a regular encrypted post, all these fields are optional. You can update only one at a time. 
 ```JSON
@@ -249,12 +302,184 @@ And this is how to decrypt this post. The `status` can be anything else. This is
 200: {"message": "Post with serial `<serial>` has been updated in our database."}
 400: {"message": "This post is not encrypted. Everyone can read it."}
 401: {"message": "This is the wrong key. We can't decrypt the message, so you can't edit it."}
+401: {"msg": "Token has expired"}
+401: {"msg": "Missing Authorization Header"}
 404: {"message": "There is no post with this serial. Please recheck."}
 500: {"message":"Something went wrong. We can't upload this in our database."}
 ```
 
 # Users
-No be updated.
+This subset of URL's contains Authentification & Authorization for the **Security** tags found in other models. In order to keep the code clean we decided to use JWT tokens. Those are signed with a `Secret key` which is very hard to bruteforce, so the signiture can't be randomly modified. With the help of this module we are able to keep track of the active users on our platform.
+
+
+## Account
+This section will cover everything related to users, Registration, Login and Updating information. There are a few mentions about tokens in here.
+- **passwords**: In order to validate a `password` it must have a length between 8 and 64 
+> Note: The password used (`justAt3stp@ass`) is not a default, generated by server one. There is no thing as `default user` with this password, it's just for demonstration purposes. 
+
+### Register
+- **Description**: This method is just for adding new users to our database. There are a few restrictions, username and email must be unique, and it will output the specific UUID if the response is 201.
+- **Endpoint**: `/users/register`
+- **Method**: POST
+- **Securiy**: None
+- **Body**:
+```json
+{
+	"username": "test",
+	"email": "test@test.ro",
+	"password": "justAt3stp@ass"
+}
+```
+- **Reponses**:
+```
+201: {"message": "User with uuid `<uuid>` has registered successfully"}
+400: {"message": "A password must have between 8 and 64 characters long and it must contain letters (uppercase and lowercase) and digits."}
+401: {"message": "This username already exists in our database. Try to login or reset the password"} 
+401: {"message": "This email already exists in our database. Try to login or reset the password"}
+```
+
+### Login 
+- **Description**: Passing username and password will provide you with a 15 minute valid [access_token](#tokens) with fresh status and 1 month [refresh_token](#tokens). 
+- **Endpoint**: `/users/login`
+- **Method**: POST
+- **Securiy**: None
+- **Body**:
+```json
+{
+	"email": "test@test.ro",
+	"password": "justAt3stp@ass"
+}
+```
+- **Reponses**:
+```json
+200:
+{
+    "message": "Successfuly logged in!",
+    "access_token": "{access_token with Fresh status}",
+    "refresh_token": "{refresh_token}"
+}
+401: {"message": "Invalid credentials!"}
+404: {"message": "This user doesn't exist in our database."}
+```
+
+### Edit user by UUID 
+- **Description**: Here you can update the email, password and other details related to the account. For this you will need a token with the [fresh](#tokens) attribute.
+- **Endpoint**: `/users/edit/<uuid>`
+- **Method**: PUT
+- **Securiy**: `Authorization: Bearer {{access_token}}`, token with [fresh=True](#tokens) attribute
+- **Body**: In future versions there will be other things to edit.
+```json
+{
+	"email": "",
+	"password":""
+}
+```
+- **Reponses**:
+```json
+200: {"message": "There is nothing to change in here."}
+201: {"message": "Changes have been updated in our database."}
+400: {"message": "This email is already linked to another account."}
+400: {"message": "You can't change the password with the old one."}
+400: {"message": "A password must have between 8 and 64 characters long and it must contain letters (uppercase and lowercase) and digits."}
+404: {"message": "This user doesn't exist anymore!"}
+500: {"message": "There was an error on our system and we can't save this to our database. Try again"}
+```
+
+## Tokens
+I will go more in depth here what's with that `access_token` and `refresh_token`, including the fresh statute of those.
+- `Access tokens`: These tokens can be generated with two different statutes: Fresh or not. First of all, an access_token can be generated either by a fresh login, or by using the refresh_tokens. In order to get a token with status `Fresh=True` you will need to pass the password along with the refresh token. The length of these tokens is `15 minutes`.
+- `Refresh tokens`: They are passed first at login and they can last up to one month. Their only purpose is to renew the access_tokens. Passing a password along with this tokens will result in generating `Fresh tokens` ( access and refresh )
+- `Fresh tokens` : These tokens can only be obtained by passing user credentials (at login) or at least the password associeted with the UUID stored in the `refresh_token`. There are a few places where you will need this kind of token, those being mentioned in the **Security** tag.
+
+### Refresh tokens
+- **Description**: With this method you can generate a new `access_token`, but without the fresh statute. 
+- **Endpoint**: `/users/refresh`
+- **Method**: GET
+- **Securiy**: `Authorization: Bearer {{refresh_token}}`
+- **Body**: None 
+- **Reponses**:
+```json
+200:
+{
+    "message": "You got a new access token!",
+    "access_token": "<token>"
+}
+422: {"msg": "Only refresh tokens are allowed"}
+```
+
+### Fresh tokens
+- **Description**: With this method you can generate a new `access_token` as well as `refresh_token`, but with the fresh statute. 
+- **Endpoint**: `/users/refresh/login`
+- **Method**: POST
+- **Securiy**: `Authorization: Bearer {{refresh_token}}`
+- **Body**:
+```json
+{
+	"password": "justAt3stp@ass"
+}
+```
+- **Reponses**:
+```json
+200:
+{
+    "message": "Access granted. You have renewed you session",
+    "access_token": "<access_token with Fresh=True>",
+    "refresh_token": "<refresh_token>"
+}
+422: {"msg": "Only refresh tokens are allowed"}
+```
+
+## Dumping Users
+Found as well in the `Posts` module, this just dump users, and it accept filters.
+
+### Dump all Users
+- **Description**: This will display all users that are curently in our database.
+- **Endpoint**: `/users/dump`
+- **Method**: GET
+- **Securiy**: `Authorization: Bearer {{access_token}}`
+- **Body**: None
+- **Reponses**:
+```json
+200: 
+{
+    "count": 1,
+    "data": [
+        {
+            "email": "test@test.ro",
+            "activity": 3,
+            "username": "test",
+            "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+            "id": 1
+        }
+    ]
+}
+404: {"message":"There are no users registered yet."}
+Others error messages are related to security ( validity of JWT Tokens )
+```
+
+### Dump by UUID
+- **Description**: This will always return only one user, the one identified by his UUID
+- **Endpoint**: `/users/dump/<uuid>`
+- **Method**: GET
+- **Securiy**: `Authorization: Bearer {{access_token}}`
+- **Body**: None
+- **Reponses**: 
+- **Reponses**:
+```json
+200: 
+{
+    "data": {
+        "email": "test@test.ro",
+        "id": 1,
+        "uuid": "2d9c26cd-68d6-4bed-9434-55017b15dc3a",
+        "activity": 3,
+        "username": "test"
+    }
+}
+}
+404: {"message": "There is no user with the specified UUID."}
+Others error messages are related to security ( validity of JWT Tokens )
+```
 
 # Articles
 - [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
