@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, fresh_jwt_required, get_jwt_identit
 from models.post import Post
 from models.user import User
 from schema.posts import PostsSchema
-from config import dataEnc,bcrypt
+from config import dataEnc,bcrypt, log
 
 schemaMany = PostsSchema(many=True)
 schema = PostsSchema()
@@ -59,14 +59,19 @@ class CreatePosts(Resource):
         #encrypting posts, in the needed cases.
         if data.encryptionKey:
             data.status = 'encrypted'
-            data.content = dataEnc.encodeString(data.content,data.encryptionKey)
-            data.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
+            try:
+                data.content = dataEnc.encodeString(data.content,data.encryptionKey)
+                data.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
+            except Exception as e:
+                log.error('Encryption error when creating a post! Check error message: {}'.format(e))
+                return {"message": "Internal server error!"},500
         try:
             data.save_to_db() #save the post
             authorData.activity +=1 #increment the activity
             authorData.save_to_db() #save it 
             return {"message": "Post created with serial `{}`.".format(data.serial)},201
-        except:
+        except Exception as e:
+            log.error('Database error when creating a new post. Check the error message: {}'.format(e))
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
 class HandlePosts(Resource):
@@ -110,7 +115,8 @@ class HandlePosts(Resource):
                         post.status = 'encrypted'
                         post.content = dataEnc.encodeString(post.content, data.encryptionKey)
                         post.encryptionKey = bcrypt.generate_password_hash(data.encryptionKey)
-                    except:
+                    except Exception as e:
+                        log.error("There was an error with encrypting data. Check message: {}".format(e))
                         return {"message": "There was an error with the encryption. Try again."},500
                 else:
                     return {
@@ -122,11 +128,13 @@ class HandlePosts(Resource):
         try:
             post.save_to_db()
             return {"message": "Post with serial `{}` has been updated in our database".format(serial)},200
-        except:
+        except Exception as e:
+            log.eror("There was an error with updating posts. Check message: {}".format(e))
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
     @fresh_jwt_required
     def delete(self, serial):
+        log.critical("{} tried to delete the post with serial `{}`".format(request.remote_addr, serial))
         return {"message": "Method is still not implemented."}, 500
         post = Post.find_by_serial(serial)
         if not post:
@@ -136,7 +144,8 @@ class HandlePosts(Resource):
         try:
             post.save_to_db()
             return {"message": "Post with serial `{}` has been purged from our database".format(serial)},202
-        except:
+        except Exception as e:
+            log.error("There was a problem when deleting a post. Check message: {}".format(e))
             return {"message":"Something went wrong. We can't upload this in our database."},500
 
 # Create a new method to see encrypted posts. 
@@ -186,5 +195,6 @@ class ReadEncrypted(Resource):
         try:
             post.save_to_db()
             return {"message": "Post with serial `{}` has been updated in our database.".format(serial)},200
-        except:
+        except Exception as e:
+            log.error("There was an error when updated an encrypted post. Check message: {}".format(e))
             return {"message":"Something went wrong. We can't upload this in our database."},500

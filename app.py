@@ -4,7 +4,7 @@ from os import environ
 from marshmallow import ValidationError
 
 # Importing the esential falsk tools
-from config import db, ma,bcrypt,jwt
+from config import db, ma,bcrypt,jwt,log
 
 # Importing resources
 from resources.posts import (

@@ -24,9 +24,10 @@ This needs to be done before of the releasing date, which is not yet known. It's
 - [x] Link the posts with the author, by adding foreignKeys
 - [ ] Find a way to store for 30 days the deleted posts. 
 - [x] Secure the API
+- [ ] Logout functionality
 - [ ] Add some role system
 - [ ] Add activity feature (using the access & refresh tokens)
-- [ ] Add a monitoring system and be able to recieve it (MongoDB maybe)
+- [x] Add a monitoring system and be able to recieve it (Logger implementation)
 
 ### Developing
 None of the following can be used in a production enviroment. Some are full of bugs or not yet started. For the working ones you can check [Endpoints Docs](Endpoints.md)
@@ -35,3 +36,6 @@ None of the following can be used in a production enviroment. Some are full of b
     - Delete a post by its id
 2. Authors
     - Logout an user, revoking it's credentials.
+3. Mailing 
+    - Be able to send mails to users
+    - Send email if something critical occurs.

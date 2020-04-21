@@ -23,7 +23,8 @@
     - [Dumping users](#dumping-users)
         - [Dump all](#dump-all-users)
         - [Dump by UUID](#dump-by-uuid)
-3. [Articles](#articles)
+3. [Logging](#logging)
+4. [Articles](#articles)
 
 # Posts
 This category handles all the thing related to reading/creating/updating/deleting content from the database. The methods support AES encryption. All of the requests take in and reponde with **JSON** data. 

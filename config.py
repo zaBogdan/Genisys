@@ -2,9 +2,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from dotenv import load_dotenv
 from encryption import DataEncryption
+from loger import init_log
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
-import logging
+from logging.config import dictConfig
 
 
 load_dotenv(".env")
@@ -13,4 +14,4 @@ ma = Marshmallow()
 bcrypt = Bcrypt()
 dataEnc = DataEncryption()
 jwt = JWTManager()
-logging.basicConfig(level=logging.DEBUG)
+log = init_log('api')

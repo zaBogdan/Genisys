@@ -3,7 +3,7 @@ from flask import request
 from flask_restful import Resource
 from models.user import User
 from schema.users import UserSchema
-from config import bcrypt
+from config import bcrypt,log
 from flask_jwt_extended import( 
     jwt_required, create_access_token,
     get_jwt_identity, create_refresh_token,
@@ -17,6 +17,7 @@ ALLOW_REGISTRATION = True #Change this for security reasons.
 class RegisterUser(Resource):
     def post(self):
         if ALLOW_REGISTRATION == False:
+            log.warning('{} tried to register, even if they are closed!'.format(request.remote_addr))
             return {"message": "Sorry, but you can't register right now. We have a limited number of users."},401
         data = schema.load(request.get_json())
         if User.find_by_name(data.username):
@@ -35,8 +36,10 @@ class RegisterUser(Resource):
             },400
         try:
             data.save_to_db()
+            log.info('A new user has been added to our database!')
             return {"message": "User with uuid `{}` has registered successfully".format(data.uuid)},201
-        except:
+        except Exception as e:
+            log.error('Database error at user registeration. Check the error message: {}'.format(e))
             return {"message": "There was an error. We can't save this user to our database."},500
 
 class LoginUser(Resource):
@@ -47,9 +50,12 @@ class LoginUser(Resource):
         if not user:
             return {"message": "This user doesn't exist in our database."},404
         if not bcrypt.check_password_hash(user.password, data.password):
+            log.warning("User `{}` failed to enter the correct password. The request was made from `{}`".format(user.username,request.remote_addr))
             return {"message": "Invalid credentials!"},401
         access_token = create_access_token(identity = user.uuid,fresh=True)
         refresh_token = create_refresh_token(identity = user.uuid)
+        log.info("User `{}` has logged in from {}.".format(user.username, request.remote_addr))
+        # current_app.logger.info('%s logged in successfully', user.username)
         return {
             "message": "Successfuly logged in!",
             "access_token": access_token,
@@ -61,6 +67,7 @@ class RefreshToken(Resource):
     def get(self):
         uuid = get_jwt_identity()
         access_token = create_access_token(identity = uuid, fresh=False)
+        log.info("User `{}` has refreshed access token from {}.".format(user.username, request.remote_addr))
         return {
             "message": "You got a new access token!",
             "access_token": access_token
@@ -79,11 +86,13 @@ class RefreshLogin(Resource):
         if bcrypt.check_password_hash(user.password, data.password):
             access_token = create_access_token(identity = uuid, fresh=True)
             refresh_token = create_access_token(identity = uuid)
+            log.info("User `{}` refreshed his login from {}".format(data.username, request.remote_addr))
             return {
                 "message": "Access granted. You have renewed you session",
                 "access_token": access_token,
                 "refresh_token": refresh_token
             },200
+        log.warning("User `{}` failed to enter the correct password".format(data.username))
         return {"message": "Wrong password. Try again!"},401
 
 class DumpUsers(Resource):
@@ -127,8 +136,10 @@ class EditUser(Resource):
                 },400
         try:
             user.save_to_db()
+            log.info("User `{}` has updated his profile from {}.".format(user.username, request.remote_addr))
             return {"message": "Changes have been updated in our database."},201
-        except:
+        except Exception as e:
+            log.error("There was an error when updating a user profile. Check message: {}".format(e))
             return {"message": "There was an error on our system and we can't save this to our database. Try again"},500
 class DumpUser(Resource):
     @jwt_required
