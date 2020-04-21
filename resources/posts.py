@@ -24,7 +24,7 @@ class AuthorPosts(Resource):
     def get(self, name):
         user = User.find_by_name(name)
         if not id:
-            return {"message": "This author didn't posted yet."}
+            return {"message": "This author didn't posted yet."},404
         data = Post.find_by_author(user.id)
         if not data:
             return {"message": "This author didn't posted yet."},404

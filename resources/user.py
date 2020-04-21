@@ -78,9 +78,11 @@ class RefreshLogin(Resource):
 
         if bcrypt.check_password_hash(user.password, data.password):
             access_token = create_access_token(identity = uuid, fresh=True)
+            refresh_token = create_access_token(identity = uuid)
             return {
                 "message": "Access granted. You have renewed you session",
-                "access_token": access_token
+                "access_token": access_token,
+                "refresh_token": refresh_token
             },200
         return {"message": "Wrong password. Try again!"},401
 
