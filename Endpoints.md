@@ -424,7 +424,7 @@ I will go more in depth here what's with that `access_token` and `refresh_token`
 {
     "message": "Access granted. You have renewed you session",
     "access_token": "<access_token with Fresh=True>",
-    "refresh_token": <refresh_token>"
+    "refresh_token": "<refresh_token>"
 }
 422: {"msg": "Only refresh tokens are allowed"}
 ```
