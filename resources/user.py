@@ -67,7 +67,7 @@ class RefreshToken(Resource):
     def get(self):
         uuid = get_jwt_identity()
         access_token = create_access_token(identity = uuid, fresh=False)
-        log.info("User `{}` has refreshed access token from {}.".format(user.username, request.remote_addr))
+        log.info("User identified by UUID `{}` has refreshed access token from {}.".format(uuid, request.remote_addr))
         return {
             "message": "You got a new access token!",
             "access_token": access_token

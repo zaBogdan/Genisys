@@ -21,13 +21,21 @@ from resources.user import (
 app = Flask(__name__)
 api = Api(app)
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+# Initializing the data
+db.init_app(app)
+ma.init_app(app)
+bcrypt.init_app(app)
+jwt.init_app(app)
+
+# Getting the config file
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= True
 app.config['SQLALCHEMY_DATABASE_URI']= 'mysql+pymysql://{}:{}@{}/api'.format(
     environ.get('DB_USER'),
     environ.get('DB_PASSWORD'),
     environ.get('DB_HOSTS')
 )
 app.config['JWT_SECRET_KEY'] = environ.get('JWT_SECRET_KEY')
+
 
 # Create all tables.
 @app.before_first_request
@@ -65,11 +73,11 @@ api.add_resource(DumpUser, '/users/dump/<string:uuid>')
 api.add_resource(EditUser, '/users/edit/<string:uuid>')
 
 if __name__ == '__main__':
-    db.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
     app.run(
+        host="0.0.0.0",
         debug=True,
         port=1337
     )

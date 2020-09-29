@@ -5,7 +5,7 @@ from encryption import DataEncryption
 from loger import init_log
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
-from logging.config import dictConfig
+# from logging.config import dictConfig
 
 
 load_dotenv(".env")

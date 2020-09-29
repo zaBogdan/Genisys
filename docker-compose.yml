@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  python_api:
+    volumes:
+      - ./:/root/Genisys
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: Genisys
+    depends_on:
+      - database_api
+    ports:
+      - 1337:1337
+  database_api:
+    container_name: GenisysDB
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MiDeMETANERophoi
+      MYSQL_DATABASE: api
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: oGRELrYPINdeNTER
